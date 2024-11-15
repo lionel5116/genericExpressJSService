@@ -1,0 +1,454 @@
+Auth.js
+const jwt = require('jsonwebtoken');
+const config = require('config');
+
+module.exports = function(req,res,next) {
+
+   //GET THE TOKEN FROM THE HEADER ***
+   const token = req.header('x-auth-token');
+   
+   //Check if no token
+   if(!token) {
+       return res.status(401).json({msg:'No token, authorization denied'});
+   }
+
+   //verify token (if it finds a token in header)
+   //DECODE THE TOKEN ***** AND THEN ONCE DECODED, WE WILL USE THE REQ.USER THROUGHOUT OUR APPLICATION
+   try {
+    const decoded = jwt.verify(token,config.get('jwtSecretToken'));
+    req.user = decoded.user;
+    next();
+   }
+   catch(err) {
+     res.status(401).json({msg:'Token is not valid'})
+   }
+}
+
+
+/api/auth
+Endpoint
+http://localhost:5000/api/auth
+Explanation: Authorizes a user based on a token passed into the header
+Verb: GET
+Protected: YES -AUTH
+Payload: 
+Header: YES
+const token = req.header('x-auth-token');
+
+Return:
+User Info:
+{
+    "_id": "6304eec97d22bee6cb9eac03",
+    "name": "sharronjones",
+    "email": "sharronJones@gmail.com",
+    "avatar": "//www.gravatar.com/avatar/386c494d0ce917ef1e60b862cd8ae609?s=200&r=pg&d=mm",
+    "date": "2022-08-23T15:14:17.347Z",
+    "__v": 0
+}
+
+
+
+
+Endpoint
+http://localhost:5000/api/auth
+Explanation: Authorizes a user based email and password passed in the payload 
+Verb: POST
+Protected: NO
+Header: NO
+Payload:
+{
+   "email":"sharronJones@gmail.com",
+   "password":"sharron123"
+}
+
+Return:
+Token
+"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjMwNGVlYzk3ZDIyYmVlNmNiOWVhYzAzIn0sImlhdCI6MTY2MTI2Nzk4NiwiZXhwIjoxNjYxMzU0Mzg2fQ.Tl1AdFaMtVAFn_Lh24W8K-ziB_rCTsgAHKo7DfVAerE"
+
+
+/api/users
+Endpoint
+http://localhost:5000/api/users/
+Explanation: Registers the user and assigns a token via JWT 
+Verb: POST
+Protected: NO
+Payload:
+{
+   "name":"sharronjones",
+   "email":"sharronJones@gmail.com",
+   "password":"sharron123"
+} 
+Return:
+"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjMwNGVlYzk3ZDIyYmVlNmNiOWVhYzAzIn0sImlhdCI6MTY2MTI2NzY1NywiZXhwIjoxNjYxMzU0MDU3fQ.t-rVCQmnjUXm42bbatNaDgYGkmoYnR7wd0HxIEiqJ1U"
+
+
+
+/api/travel
+Endpoint
+http://localhost:5000/api/travel/createTravelRecord
+Explanation:  
+Verb: POST
+Protected: NO
+Header: NO
+Payload:
+ const body = {
+      Destination: this.Destination,
+      Year: this.Year,
+      TravelDate: this.TravelDate,
+      Airline: this.Airline,
+      Hotel: this.Hotel,
+      BookingCode: this.BookingCode,
+      APCode: this.APCode,
+      ItineraryFlght: this.ItineraryFlght,
+      ItineraryHotel: this.ItineraryHotel,
+      Status: this.Status,
+      FlightCost: this.FlightCost,
+      HotelCost: this.HotelCost,
+      GirlCost: this.GirlCost,
+      TotalCost: this.TotalCost,
+      Rating: this.Rating,
+      Notes: this.Notes,
+      };
+
+
+{
+	"Destination": "Costa Rica",
+      "Year": "2019",
+      "TravelDate": "7/19/2019",
+      "Airline": "United",
+      "Hotel": "Taormina",
+      "BookingCode": "EZS9V6",
+      "APCode": "SJO",
+      "ItineraryFlght": "7451361251317",
+      "ItineraryHotel": "7451361251317",
+      "Status": "BOOKED",
+      "FlightCost": "250",
+      "HotelCost": "146",
+      "GirlCost": "400",
+      "TotalCost": "1200",
+      "Rating": "EXCELLENT",
+      "Notes": "Awsome trip.. but will definetly repeat/ and this works",
+}
+
+Return:
+The MONGO DBObject with all of the data
+.json({ travel: createdTravel.toObject({ getters: true }) });
+
+{
+      "id":"62e92ed3d860bb8194e970f9"
+	"Destination": "Costa Rica",
+      "Year": "2019",
+      "TravelDate": "7/19/2019",
+      "Airline": "United",
+      "Hotel": "Taormina",
+      "BookingCode": "EZS9V6",
+      "APCode": "SJO",
+      "ItineraryFlght": "7451361251317",
+      "ItineraryHotel": "7451361251317",
+      "Status": "BOOKED",
+      "FlightCost": "250",
+      "HotelCost": "146",
+      "GirlCost": "400",
+      "TotalCost": "1200",
+      "Rating": "EXCELLENT",
+      "Notes": "Awsome trip.. but will definetly repeat/ and this works",
+}
+
+
+
+Endpoint
+http://localhost:5000/api/travel/62e92e77d860bb8194e970f5
+Explanation:  Deletes the travel record
+Verb: DELETE
+Protected: NO
+Header: NO
+Payload:
+{
+  
+}
+
+Return:
+
+
+Endpoint
+http://localhost:5000/api/travel/62e92e77d860bb8194e970f5
+Explanation: Updates the travel record  based on id passed in URL Param and Payload
+(the :/id is under the hood, it see's the value you passed in as the value for the parameter)
+Verb: PUT
+Protected: NO
+Header: NO
+Payload:
+{
+
+	"Destination": "Costa Rica",
+      "Year": "2019",
+      "TravelDate": "7/19/2019",
+      "Airline": "United",
+      "Hotel": "Taormina",
+      "BookingCode": "EZS9V6",
+      "APCode": "SJO",
+      "ItineraryFlght": "7451361251317",
+      "ItineraryHotel": "7451361251317",
+      "Status": "BOOKED",
+      "FlightCost": "250",
+      "HotelCost": "146",
+      "GirlCost": "400",
+      "TotalCost": "1200",
+      "Rating": "EXCELLENT",
+      "Notes": "Awsome trip.. but will definetly repeat/ and this works",
+
+}
+
+Return:
+
+
+
+
+Endpoint
+hhttp://localhost:5000/api/travel/62e92e77d860bb8194e970f5
+Explanation: Returns Travel Record based on id passed in URL Param 
+(the :/id is under the hood, it see's the value you passed in as the value for the parameter)
+Verb: GET
+Protected: NO
+Header: NO
+Payload:
+{
+  
+}
+
+Return:
+{
+      "id":"62e92e77d860bb8194e970f5"
+	"Destination": "Costa Rica",
+      "Year": "2019",
+      "TravelDate": "7/19/2019",
+      "Airline": "United",
+      "Hotel": "Taormina",
+      "BookingCode": "EZS9V6",
+      "APCode": "SJO",
+      "ItineraryFlght": "7451361251317",
+      "ItineraryHotel": "7451361251317",
+      "Status": "BOOKED",
+      "FlightCost": "250",
+      "HotelCost": "146",
+      "GirlCost": "400",
+      "TotalCost": "1200",
+      "Rating": "EXCELLENT",
+      "Notes": "Awsome trip.. but will definetly repeat/ and this works",
+}
+
+
+
+Endpoint
+http://localhost:5000/api/travel/searchTravelRecord
+Explanation:  Search Records based on TRAVEL Criteria specified
+Verb: POST
+Protected: NO
+Header: NO
+Payload:
+search types:{ All, BookingCode, Airline, APCode, Year, Status, SearchType } 
+
+{
+     "BookingCode": "",
+     "Airline": "",
+     "APCode": "",
+     "Status": "",
+     "Year": "",
+     "SearchType": "All"
+}
+Return:
+Returns an Array of records based on criteria passed in
+ "travel": [
+        {
+            "_id": "62e92e77d860bb8194e970f5",
+            "Destination": "Costa Rica",
+            "Year": "2019",
+            "TravelDate": "7/19/2019",
+            "Airline": "United",
+            "Hotel": "Taormina",
+            "BookingCode": "EZS9V6",
+            "APCode": "SJO",
+            "ItineraryFlght": "7451361251317",
+            "ItineraryHotel": "7451361251317",
+            "Status": "COMPLETE",
+            "FlightCost": 250,
+            "HotelCost": 856,
+            "GirlCost": 730,
+            "TotalCost": 1836,
+            "Rating": "EXCELLENT",
+            "Notes": "Awsome trip. hit wayy too many.. but will definetly repeat/ and this works",
+            "__v": 0
+        },
+        {
+            "_id": "62e92ed3d860bb8194e970f9",
+            "Destination": "Colombia",
+            "Year": "2019",
+            "TravelDate": "08/16/2019",
+            "Airline": "American",
+            "Hotel": "Novelty Suites Hotel",
+            "BookingCode": "EPYHEG",
+            "APCode": "MDE",
+            "ItineraryFlght": "7453459806416",
+            "ItineraryHotel": "7453459806416",
+            "Status": "COMPLETE",
+            "FlightCost": 887,
+            "HotelCost": 151,
+            "GirlCost": 450,
+            "TotalCost": 1554,
+            "Rating": "GOOD",
+            "Notes": "Awsome trip. Cartegena was a little week/ Airfare was $887.00/ Hotel was $151.00",
+            "__v": 0
+        },
+]
+
+
+
+Appointment
+/api/appointment
+
+Endpoint
+http://localhost:5000/api/appointment/createAppointment
+Explanation: Creates Appointment Record
+Verb: POST
+Protected: NO
+Header: NO
+Payload:
+{
+   "AppDate": "9/17/2022",
+   "AppType":"Session",
+   "ContactPerson": "Salome Paisa",
+   "ContactPhone":"+57 300 8009074",
+   "Status":"Pending",
+   "Location": "Novelty Suites",
+   "Cost": 100,
+   "Notes": "All time favorite. Cant wait to see her"
+}
+Return:
+{
+    "appointment": {
+        "AppDate": "9/17/2022",
+        "AppType": "Session",
+        "ContactPerson": "Salome Paisa",
+        "ContactPhone": "+57 300 8009074",
+        "Status": "Pending",
+        "Location": "Novelty Suites",
+        "Cost": 100,
+        "Notes": "All time favorite. Cant wait to see her",
+        "_id": "631a0eaae913931419b61a25",
+        "__v": 0,
+        "id": "631a0eaae913931419b61a25"
+    }
+}
+
+
+Endpoint
+http://localhost:5000/api/appointment/searchAppointment
+Explanation: Searches Appointment Record
+Verb: POST
+Protected: NO
+Header: NO
+search types:{ All, AppType, Status, ContactPerson,SearchType } 
+{
+     "AppType": "Session",
+     "Status": "",
+     "ContactPerson": "",
+     "SearchType": "AppType"
+}
+
+Return:
+{
+    "appointment": [
+        {
+            "_id": "631a0ee2e913931419b61a29",
+            "AppDate": " 9/17/2022",
+            "AppType": "Session",
+            "ContactPerson": "Salome Paisa",
+            "ContactPhone": "+57 300 8009074",
+            "Status": "Pending",
+            "Location": "Novelty Suites",
+            "Cost": 125,
+            "Notes": "All time favorite. Cant wait to see her, she is definitely one of my all time favorites",
+            "__v": 0
+        }
+    ]
+}
+
+
+Endpoint
+hhttp://localhost:5000/api/appointment/xxxxxxxxxxxx
+Explanation: Returns appointment Record based on id passed in URL Param 
+(the :/id is under the hood, it see's the value you passed in as the value for the parameter)
+Verb: GET
+Protected: NO
+Header: NO
+Payload:
+{
+  
+}
+
+Return:
+{
+    "appointment": [
+        {
+            "_id": "631a0ee2e913931419b61a29",
+            "AppDate": " 9/17/2022",
+            "AppType": "Session",
+            "ContactPerson": "Salome Paisa",
+            "ContactPhone": "+57 300 8009074",
+            "Status": "Pending",
+            "Location": "Novelty Suites",
+            "Cost": 125,
+            "Notes": "All time favorite. Cant wait to see her, she is definitely one of my all time favorites",
+            "__v": 0
+        }
+    ]
+}
+
+Endpoint
+hhttp://localhost:5000/api/appointment/xxxxxxxxxxxx
+Explanation: Updates the appointment record
+(the :/id is under the hood, it see's the value you passed in as the value for the parameter)
+Verb: PUT
+Protected: NO
+Header: NO
+Payload:
+{
+   "AppDate": 9/17/2022
+   "AppType":"Session"
+   "ContactPerson": Salome Paisa
+   "ContactPhone": +57 300 8009074
+   "Status":"Pending"
+   "Location": "Novelty Suites"
+   "Cost": 100
+   "Notes": "All time favorite. Cant wait to see her
+}
+
+Return:
+{
+
+}
+
+
+
+
+
+
+/api/
+Endpoint
+http://localhost:5000/api/
+Explanation:  
+Verb: 
+Protected: NO
+Header: NO
+Payload:
+{
+  
+}
+
+Return:
+
+
+
+
+
+

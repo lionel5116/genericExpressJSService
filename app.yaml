@@ -1,0 +1,4 @@
+runtime: nodejs16 # or another supported version
+
+#env_variables:
+  #VUE_APP_API_BASE: https://civic-brand-365722.uc.r.appspot.com/api
