@@ -6,6 +6,8 @@ const EmployeeTableSchema = new Schema({
     SchoolName:{ type: String , required: true},
     EmployeeName:{ type: String , required: true},
     Role:{ type: String , required: true},
+    Position:{ type: String , required: true},
+    CrossWalked:{ type: String , required: true},
     Certification:{ type: String},
 })
 
